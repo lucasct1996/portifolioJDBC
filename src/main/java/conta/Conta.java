@@ -8,7 +8,7 @@ public class Conta {
 
     public Conta(String usuario, BigDecimal saldo) {
         this.usuario = usuario;
-        this.saldo = BigDecimal.ZERO;
+        this.saldo = saldo;
     }
 
 
@@ -17,12 +17,10 @@ public class Conta {
     }
 
     public BigDecimal getSaldo() {
+
         return saldo;
     }
 
-    public boolean possuiSaldo() {
-        return this.saldo.compareTo(BigDecimal.ZERO) != 0;
-    }
 
     public void sacar(BigDecimal valor) {
 

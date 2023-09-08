@@ -14,7 +14,7 @@ public class PizzariaAplicattion {
     public static void main(String[] args) {
 
     var opcao = exibirMenu();
-        while (opcao != 6) {
+        while (opcao != 7) {
         try {
             switch (opcao) {
                 case 1:
@@ -31,6 +31,9 @@ public class PizzariaAplicattion {
                     break;
                 case 5:
                     deletarConta();
+                    break;
+                case 6:
+                    sacarConta();
                     break;
             }
         } catch (RegraDeNegocioException e) {
@@ -59,6 +62,7 @@ public class PizzariaAplicattion {
             }
             opcaoCardapio = exibirCardapio();
         }
+
 
 }
 
@@ -128,7 +132,23 @@ public class PizzariaAplicattion {
         var usuario = teclado.next();
 
         service.deleteConta(usuario);
-        System.out.println("Conta deletada com sucesso");
+
+        System.out.println("Digite uma tecla para voltar ao menu");
+        teclado.next();
+    }
+
+    private static void sacarConta(){
+        System.out.println("Digite o nome do usuario");
+        var usuario = teclado.next();
+
+        System.out.println("Digite o valor que voce quer sacar");
+        var valor = teclado.nextBigDecimal();
+
+        service.realizarSaque(usuario, valor);
+        System.out.println("Deposito realizado com sucesso");
+        BigDecimal saldo = service.consultar(usuario);
+
+        System.out.println("Seu saldo novo é de: " + saldo);
 
         System.out.println("Digite uma tecla para voltar ao menu");
         teclado.next();
@@ -162,7 +182,8 @@ public class PizzariaAplicattion {
                 3 - Depositar na Conta
                 4 - Exibir Cardapio
                 5 - Encerrar conta
-                6 - Sair
+                6 - Sacar
+                7 - Sair
                 """);
         return teclado.nextInt();
     }

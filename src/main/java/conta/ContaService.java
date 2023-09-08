@@ -2,10 +2,9 @@ package conta;
 
 import cliente.Cliente;
 
-
 import java.math.BigDecimal;
 import java.sql.Connection;
-import java.sql.SQLException;
+
 
 
 public class ContaService {
@@ -27,13 +26,33 @@ public class ContaService {
         return saldo;
     }
 
-    public void realizarDeposito(String usuario, BigDecimal valorDeposito){
-        Connection conn = connection.recuperarConexao();
-        new ContaDAO(conn).alterar(usuario, valorDeposito);
-        if(valorDeposito.compareTo(BigDecimal.ZERO) <= 0) {
+    public void realizarDeposito(String usuario, BigDecimal valor){
+        var conta = buscarContaPorNumero(usuario);
+
+        if(valor.compareTo(BigDecimal.ZERO) <= 0) {
             throw new RegraDeNegocioException("O valor do deposito deve ser superior a zero!");
         }
+
+        BigDecimal novoSaldo = valor.add(conta.getSaldo());
+        alterar(conta.getUsuario(), novoSaldo);
+
     }
+
+    public void realizarSaque(String usuario, BigDecimal valor){
+        var conta = buscarContaPorNumero(usuario);
+
+        if(valor.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new RegraDeNegocioException("O valor do deposito deve ser superior a zero!");
+        }
+
+        if (valor.compareTo(conta.getSaldo()) >= 0) {
+            throw new RegraDeNegocioException("O valor nao pode ser maior que o seu saldo");
+        }
+        conta.sacar(valor);
+        alterar(conta.getUsuario(), conta.getSaldo());
+
+    }
+
 
     public void deleteConta(String usuario){
         var conta = consultar(usuario);
@@ -46,6 +65,24 @@ public class ContaService {
             System.out.println("Conta não pode ser encerrada pois ainda possui saldo!");
         }
     }
+
+    private Conta buscarContaPorNumero(String usuario) {
+        Connection conn = connection.recuperarConexao();
+
+        Conta conta = new ContaDAO(conn).consultar(usuario);
+        if(conta != null) {
+            return conta;
+        } else {
+            throw new RegraDeNegocioException("Não existe conta cadastrada com esse número!");
+        }
+    }
+
+    private void alterar(String usuario, BigDecimal novoSaldo) {
+        Connection conn = connection.recuperarConexao();
+        new ContaDAO(conn).alterar(usuario, novoSaldo);
+    }
+
+
 }
 
 

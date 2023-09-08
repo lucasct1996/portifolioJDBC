@@ -45,6 +45,7 @@ public class ContaDAO {
 
     }
 
+
     public BigDecimal verSaldo(String usuario) {
         PreparedStatement ps;
         ResultSet resultSet;
@@ -60,11 +61,11 @@ public class ContaDAO {
                 BigDecimal saldo = resultSet.getBigDecimal("saldo");
                 resultSet.close();
                 ps.close();
-                return saldo; // Retorna o saldo se encontrado
+                return saldo;
             } else {
                 resultSet.close();
                 ps.close();
-                return BigDecimal.ZERO; // Retorna zero se a conta não for encontrada
+                return BigDecimal.ZERO;
             }
 
         } catch (SQLException e) {
@@ -72,18 +73,19 @@ public class ContaDAO {
         }
     }
 
-    public void alterar(String usuario, BigDecimal valorDeposito) {
+    public void alterar(String usuario, BigDecimal novoSaldo) {
         PreparedStatement ps;
 
-        String sql = "UPDATE conta SET saldo = saldo + ? WHERE usuario = ?";
+        String sql = "UPDATE conta SET saldo = ? WHERE usuario = ?";
 
         try  {
             ps = conn.prepareStatement(sql);
-            ps.setBigDecimal(1, valorDeposito);
+            ps.setBigDecimal(1, novoSaldo);
             ps.setString(2, usuario);
             ps.executeUpdate();
 
             ps.close();
+            conn.close();
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -94,6 +96,35 @@ public class ContaDAO {
                 throw new RuntimeException(e);
             }
         }
+    }
+
+
+    public Conta consultar(String usuario) {
+        PreparedStatement ps;
+        ResultSet resultSet;
+        Conta conta = null;
+
+        String sql = "SELECT usuario, saldo FROM conta WHERE usuario = ?";
+
+
+        try {
+            ps = conn.prepareStatement(sql);
+            ps.setString(1, usuario);
+            resultSet = ps.executeQuery();
+
+            if (resultSet.next()) {
+                String usuarioRecuperado = resultSet.getString("usuario");
+                BigDecimal saldo = resultSet.getBigDecimal("saldo");
+
+                conta = new Conta(usuarioRecuperado, saldo);
+            }
+            resultSet.close();
+            ps.close();
+            conn.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return conta;
     }
 
 
