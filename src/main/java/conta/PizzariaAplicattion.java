@@ -27,7 +27,7 @@ public class PizzariaAplicattion {
                     depositarConta();
                     break;
                 case 4:
-                    exibirCardapio();
+                    fazerPedido();
                     break;
                 case 5:
                     deletarConta();
@@ -43,28 +43,7 @@ public class PizzariaAplicattion {
         }
         opcao = exibirMenu();
     }
-
-        var opcaoCardapio = exibirCardapio();
-        while (opcaoCardapio != 3) {
-            try {
-                switch (opcaoCardapio) {
-                    case 1:
-                        abrirConta();
-                        break;
-                    case 2:
-                        exibirMenu();
-                        break;
-                }
-            } catch (RegraDeNegocioException e) {
-                System.out.println("Erro: " +e.getMessage());
-                System.out.println("Pressione qualquer tecla e de ENTER para voltar ao menu");
-                teclado.next();
-            }
-            opcaoCardapio = exibirCardapio();
-        }
-
-
-}
+    }
 
     private static void abrirConta(){
         System.out.println("Digite o nome da conta");
@@ -154,24 +133,30 @@ public class PizzariaAplicattion {
         teclado.next();
     }
 
-
-    private static int exibirCardapio() {
+    private static void fazerPedido(){
         System.out.println("""
                 PIZZARIA ERECHIM - Cardapio:
                 
-                - Pizza de Bacon: 75 R$
-                - Pizza de Strogonof: 90 R$
-                - Pizza de Quatro Queijos: 60 R$
-                - Pizza de Camarão: 100 R$
-                - Pizza de Coração: 80 R$
-                - Pizza de Chocolate: 80 R$
-                - Pizza de Sorvete: 88 R$
+                - Pizza de BACON: 75 R$
+                - Pizza de STROGONOF: 90 R$
+                - Pizza de QUEIJO: 60 R$
+                - Pizza de CAMARAO: 100 R$
+                - Pizza de CORACAO: 80 R$
+                - Pizza de CHOCOLATE: 80 R$
+                - Pizza de SORVETE: 88 R$
                 
-                1 - Fazer Pedido
-                2 - Voltar
-                3 - Sair
                 """);
-        return teclado.nextInt();
+
+        System.out.println("Digite o nome do seu usuario");
+        var usuario = teclado.next();
+
+        System.out.println("Digite a pizza que você quer");
+        var produto = teclado.next();
+
+        service.fazerPedido(usuario, Produtos.valueOf(produto));
+        System.out.println("Digite uma tecla para voltar ao menu");
+        teclado.next();
+
     }
 
     private static int exibirMenu() {
@@ -180,7 +165,7 @@ public class PizzariaAplicattion {
                 1 - Criar conta
                 2 - Consultar saldo
                 3 - Depositar na Conta
-                4 - Exibir Cardapio
+                4 - Fazer pedido
                 5 - Encerrar conta
                 6 - Sacar
                 7 - Sair

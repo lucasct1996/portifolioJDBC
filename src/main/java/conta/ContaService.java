@@ -45,7 +45,7 @@ public class ContaService {
             throw new RegraDeNegocioException("O valor do deposito deve ser superior a zero!");
         }
 
-        if (valor.compareTo(conta.getSaldo()) >= 0) {
+        if (valor.compareTo(conta.getSaldo()) > 0) {
             throw new RegraDeNegocioException("O valor nao pode ser maior que o seu saldo");
         }
         conta.sacar(valor);
@@ -53,6 +53,21 @@ public class ContaService {
 
     }
 
+    public void fazerPedido(String usuario, Produtos produto) {
+
+        var conta = buscarContaPorNumero(usuario);
+        BigDecimal precoPizza = produto.getPreco();
+
+        if (precoPizza.compareTo(conta.getSaldo()) >= 0 ) {
+            throw new RegraDeNegocioException("Você não possui saldo suficiente para comprar esta pizza. Seu saldo é de "
+            + conta.getSaldo());
+        }
+
+        System.out.println("Pedido realizado com sucesso!");
+        conta.sacar(produto.getPreco());
+        alterar(conta.getUsuario(), conta.getSaldo());
+        System.out.println("Seu saldo é de " + conta.getSaldo());
+    }
 
     public void deleteConta(String usuario){
         var conta = consultar(usuario);
